@@ -18,10 +18,10 @@ The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH
 2. **Run PowerShell as Administrator**  
    Right-click PowerShell and choose **Run as administrator**.
 3. **Execute the installer script**  
-   If the script file is `Install-RemoteAlerter.ps1`, run:
+   If the script file is `windows_login_ntfy_install.ps1`, run:
    
    ```powershell
-   .\Install-RemoteAlerter.ps1
+   .\windows_login_ntfy_install.ps1
    ```
    
 5. **Follow prompts**  
