@@ -27,7 +27,13 @@ The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH
    ```powershell
    .\windows_login_ntfy_install.ps1
    ```
+   OR 
    
+Run the installation .exe
+
+   ```powershell
+   .\windows_login_ntfy_install.exe
+   ```
 5. **Follow prompts**  
    - Enter your full ntfy topic URL when asked (must start with `http://` or `https://`).  
    - The script will create `C:\Scripts\RemoteAccessAlert.ps1`, lock the folder permissions, and register a scheduled task named **Ntfy-RemoteAccessAlert** that triggers on RDP and SSH login events.
