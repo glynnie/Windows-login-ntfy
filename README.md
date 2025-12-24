@@ -1,3 +1,7 @@
+
+<img width="200" alt="logo" src="https://github.com/user-attachments/assets/833168d4-35a6-42dd-b288-faa2865dde71" />
+
+
 ### 🚨 Windows-login-ntfy
 The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH logins and send notifications to an ntfy.sh topic when they occur.
 
