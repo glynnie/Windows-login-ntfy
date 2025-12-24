@@ -101,7 +101,7 @@ Write-Host "`n[2/5] SECURITY HARDENING" -ForegroundColor Yellow
 Write-Host "Why: To prevent unauthorized users from disabling alerts or changing the script,"
 Write-Host "Locking $scriptDir so only 'System' and 'Administrators' can edit it."
 try {
-    icacls $scriptDir /inheritance:r /grant:r "SYSTEM:(OI)(CI)F" /grant:r "Administrators:(OI)(CI)F" -ErrorAction Stop | Out-Null
+    icacls $scriptDir /inheritance:r /grant:r "SYSTEM:(OI)(CI)F" /grant:r "Administrators:(OI)(CI)F" | Out-Null
 } catch {
     Write-Host "Warning: Could not set directory permissions." -ForegroundColor Magenta
 }
@@ -149,23 +149,43 @@ Write-Host "`n[4/5] REGISTERING SYSTEM TRIGGER" -ForegroundColor Yellow
 Write-Host "Why: Windows Task Scheduler will 'watch' the system logs. The moment a login event"
 Write-Host "appears, it will wake up and run the alert script automatically."
 
+$sshLogExists = Get-WinEvent -ListLog OpenSSH/Operational -ErrorAction SilentlyContinue
+if (-not $sshLogExists) 
+{ Write-Host "Warning: OpenSSH event log not detected. SSH login alerts will NOT be enabled." -ForegroundColor Yellow }
+
+$sshTrigger = ""
+if ($sshLogExists) {
+    $sshTrigger = @"
+    <EventTrigger>
+      <Enabled>true</Enabled>
+      <Subscription>&lt;QueryList&gt;&lt;Query Id='0' Path='OpenSSH/Operational'&gt;&lt;Select Path='OpenSSH/Operational'&gt;*[System[(EventID=4)]]&lt;/Select&gt;&lt;/Query&gt;&lt;/QueryList&gt;</Subscription>
+    </EventTrigger>
+"@
+}
+
 $xml = @"
-<Task version='1.2' xmlns='schemas.microsoft.com'>
+<?xml version='1.0' encoding='UTF-16'?>
+<Task version='1.4' xmlns='http://schemas.microsoft.com/windows/2004/02/mit/task'>
   <Triggers>
     <EventTrigger>
       <Enabled>true</Enabled>
       <Subscription>&lt;QueryList&gt;&lt;Query Id='0' Path='Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational'&gt;&lt;Select Path='Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational'&gt;*[System[(EventID=1149)]]&lt;/Select&gt;&lt;/Query&gt;&lt;/QueryList&gt;</Subscription>
     </EventTrigger>
-    <EventTrigger>
-      <Enabled>true</Enabled>
-      <Subscription>&lt;QueryList&gt;&lt;Query Id='0' Path='OpenSSH/Operational'&gt;&lt;Select Path='OpenSSH/Operational'&gt;*[System[(EventID=4)]]&lt;/Select&gt;&lt;/Query&gt;&lt;/QueryList&gt;</Subscription>
-    </EventTrigger>
+    $sshTrigger
   </Triggers>
-  <Principals><Principal id='Author'><UserId>S-1-5-18</UserId><RunLevel>HighestAvailable</RunLevel></Principal></Principals>
+
+  <Principals>
+    <Principal id='Author'>
+      <UserId>S-1-5-18</UserId>
+      <RunLevel>HighestAvailable</RunLevel>
+    </Principal>
+  </Principals>
+
   <Settings>
     <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
     <StartWhenAvailable>true</StartWhenAvailable>
   </Settings>
+
   <Actions Context='Author'>
     <Exec>
       <Command>powershell.exe</Command>
