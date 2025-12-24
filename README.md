@@ -3,7 +3,7 @@
 
 
 ### 🚨 Windows-login-ntfy
-The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH logins and send notifications to an ntfy.sh topic when they occur.
+The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH logins and send notifications to a ntfy.sh topic when they occur.
 
 ---
 
@@ -11,7 +11,7 @@ The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH
 
 - **Windows** with PowerShell and Task Scheduler.
 - **Administrator** privileges to run the installer.
-- An **ntfy.sh** topic URL. Use a private or obscure topic as a simple secret.
+- A **ntfy.sh** topic URL. Use a private or obscure topic as a simple secret.
 - Optional **OpenSSH server** enabled if you want SSH alerts.
 
 ---
@@ -20,7 +20,7 @@ The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH
 
 1. **Save the installer** to a convenient location (for example your Downloads folder).
 2. **Run PowerShell as Administrator**  
-   Right-click PowerShell and choose **Run as administrator**.
+   Right-click PowerShell and choose **Run as Administrator**.
 3. **Execute the installer script**  
    If the script file is `windows_login_ntfy_install.ps1`, run:
    
@@ -74,7 +74,7 @@ The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH
 - **No notifications**  
   Confirm your ntfy topic URL is correct and reachable from the machine. Test with:
   ```powershell
-  Invoke-RestMethod -Uri "<your-topic>" -Method Post -Body "test"
+  Invoke-RestMethod -Uri "<your-topic-url>" -Method Post -Body "test"
   ```
   Run that in an elevated PowerShell session.
 - **Script cannot be deleted on uninstall**  
@@ -85,8 +85,8 @@ The installer sets up a scheduled task to watch for Remote Desktop (RDP) and SSH
   - SSH events: `OpenSSH/Operational` (requires OpenSSH server)
 
 #### Security
-- **ntfy topic privacy**  
-  Treat your ntfy topic URL as a secret. Use a long, obscure topic name to avoid others posting to or reading your notifications.
+- **ntfy.sh topic privacy**  
+  Treat your ntfy.sh topic URL as a secret. Use a long, obscure topic when using the free ntfy.sh website to avoid others posting to or reading your notifications.
 - **Permissions**  
   The installer locks `C:\Scripts` so only SYSTEM and Administrators can modify it. If you need to edit the script later, you may need to temporarily adjust permissions.
 - **Administrator requirement**  
